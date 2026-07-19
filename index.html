@@ -1,22 +1,345 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>益生菌生存戰爭 · Survival War of Probiotics</title>
-  <style>
-    body{margin:0;min-height:100vh;display:grid;place-items:center;
-      font-family:system-ui,"Noto Sans TC",sans-serif;
-      background:radial-gradient(circle at 30% 20%,#1b3a2a,#0a0f14);color:#e7f6ee}
-    main{text-align:center;padding:2rem}
-    h1{font-size:clamp(1.6rem,5vw,3rem);margin:0 0 .5rem}
-    p{opacity:.8}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>益生菌生存戰爭 · Survival War of Probiotics</title>
+<style>
+  :root{
+    --bg1:#12281c; --bg2:#0a0f14; --panel:#12211a; --panel2:#0f1a15;
+    --good:#37d67a; --bad:#e05b5b; --acid:#8be0c0; --ink:#e7f6ee; --muted:#9db8ab;
+    --line:#26443a; --gold:#ffd166;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;color:var(--ink);
+    font-family:system-ui,"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:radial-gradient(circle at 25% 15%,var(--bg1),var(--bg2));}
+  .wrap{max-width:1000px;margin:0 auto;padding:16px}
+  h1{font-size:clamp(1.4rem,4.5vw,2.4rem);margin:.2rem 0}
+  .sub{color:var(--muted);margin:.2rem 0 1rem}
+  button{font:inherit;cursor:pointer;border:none;border-radius:10px;padding:.6rem 1rem;
+    background:#1f6f4e;color:#fff;font-weight:600;transition:.15s}
+  button:hover{filter:brightness(1.12)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+  button.ghost{background:#20342b;color:var(--ink)}
+  button.big{font-size:1.1rem;padding:.8rem 1.4rem}
+  .hidden{display:none!important}
+  /* intro */
+  .card-box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin:14px 0}
+  .lead{line-height:1.7}
+  .lead b{color:var(--acid)}
+  /* game header */
+  .hdr{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .pill{background:#16241d;border:1px solid var(--line);border-radius:999px;padding:.35rem .8rem;font-size:.9rem}
+  /* destiny */
+  .destiny{display:flex;gap:16px;align-items:center;background:linear-gradient(135deg,#2a1c1c,#1a1414);
+    border:1px solid #4a2b2b;border-radius:16px;padding:16px;margin-bottom:14px}
+  .destiny.good{background:linear-gradient(135deg,#16321f,#122417);border-color:#2e5a3a}
+  .destiny .emoji{font-size:2.6rem;line-height:1}
+  .destiny .meta{font-size:.92rem;color:var(--muted)}
+  .thr{color:var(--gold);font-weight:700}
+  /* players */
+  .players{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(max-width:640px){.players{grid-template-columns:1fr}}
+  .pl{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .pl.me{border-color:var(--good);box-shadow:0 0 0 1px var(--good) inset}
+  .pl .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .pl .name{font-weight:700}
+  .pl .score{color:var(--gold);font-weight:700}
+  .dots{display:flex;flex-wrap:wrap;gap:4px;min-height:26px;margin:4px 0}
+  .dot{width:20px;height:20px;border-radius:50%}
+  .dot.g{background:var(--good)} .dot.b{background:var(--bad)}
+  .adv{font-size:.86rem;color:var(--muted)}
+  .adv .v{font-weight:700;color:var(--acid)}
+  .tag{display:inline-block;font-size:.72rem;padding:.1rem .45rem;border-radius:6px;margin-left:4px}
+  .tag.safe{background:#1c4d34;color:#aef5cd}
+  .tag.hurt{background:#4d1c1c;color:#f5c3c3}
+  .tag.mod{background:#2a3a1c;color:#d6f0a0}
+  /* hand */
+  .hand{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+  .chance{background:#14241d;border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+    width:150px;text-align:left}
+  .chance .cn{font-weight:700;display:block}
+  .chance .cd{font-size:.8rem;color:var(--muted);display:block;margin-top:3px}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+  .log{background:#0d1613;border:1px solid var(--line);border-radius:12px;padding:12px;
+    max-height:240px;overflow:auto;font-size:.9rem;line-height:1.55}
+  .log .row{padding:4px 0;border-bottom:1px dashed #1e332a}
+  .log .r{color:var(--bad)} .log .g{color:var(--good)} .log .y{color:var(--gold)}
+  .win{font-size:1.3rem;font-weight:800;color:var(--gold)}
+  .legend{font-size:.8rem;color:var(--muted);margin-top:6px}
+</style>
 </head>
 <body>
-  <main>
+<div class="wrap">
+
+  <!-- ===== 前言 ===== -->
+  <section id="intro">
     <h1>🦠 益生菌生存戰爭</h1>
-    <p>Survival War of Probiotics — 建置中 🚧</p>
-  </main>
+    <p class="sub">Survival War of Probiotics — 核心迴圈雛形 v0.1（你 1 席 + 3 位 AI）</p>
+    <div class="card-box lead">
+      <p>人類的腸道就像一座<b>超級大城市</b>，住著上百兆微小居民。好菌吃膳食纖維與乳糖，排出<b>有機酸</b>，讓城市偏酸；壞菌愛壞脂肪與精緻糖，排出<b>毒素與臭氣</b>，讓城市偏鹼。</p>
+      <p>壞菌怕酸——當好菌夠多、城市夠酸，壞菌就被壓制。你的任務：<b>平時用「機會卡」累積好菌優勢</b>，面對全桌<b>相同</b>的命運考驗（鹹酥雞、熬夜、流感…）時安然度過。</p>
+      <p>比的不是誰把壞菌清光（壞菌永遠留著，共生），而是<b>誰維持酸性優勢最久</b>——累積酸性優勢分最高者，腸道最健康！</p>
+    </div>
+    <button class="big" onclick="startGame()">開始遊戲 ▶</button>
+  </section>
+
+  <!-- ===== 遊戲 ===== -->
+  <section id="game" class="hidden">
+    <div class="hdr">
+      <h1 style="font-size:1.4rem;margin:0">🦠 益生菌生存戰爭</h1>
+      <div>
+        <span class="pill" id="roundPill">回合 0 / 0</span>
+      </div>
+    </div>
+
+    <div class="destiny" id="destiny"></div>
+
+    <div class="players" id="players"></div>
+
+    <div id="myTurn">
+      <div class="legend">你的手牌（每回合最多打 <b>1 張</b>，先看上方「本關門檻」再決定要不要防禦/調養）：</div>
+      <div class="hand" id="hand"></div>
+    </div>
+
+    <div class="controls">
+      <button class="big" id="resolveBtn" onclick="resolveClick()">結算本回合 ⚖️</button>
+      <button class="big ghost hidden" id="nextBtn" onclick="nextRound()">下一回合 ▶</button>
+      <span class="pill" id="phaseHint"></span>
+    </div>
+
+    <div class="log" id="log"></div>
+  </section>
+
+  <!-- ===== 結束 ===== -->
+  <section id="over" class="hidden">
+    <h1>🏁 一段生活週期結束</h1>
+    <div class="card-box" id="overBox"></div>
+    <button class="big" onclick="location.reload()">再玩一次 🔄</button>
+  </section>
+
+</div>
+
+<script>
+// ---------- 卡牌定義 ----------
+const DESTINY = {
+  snack:    {name:'鹹酥雞宵夜', emoji:'🍗', threshold:1, pen:{bad:1}, type:'bad'},
+  sugar:    {name:'精緻糖手搖', emoji:'🧋', threshold:1, pen:{bad:1}, type:'bad'},
+  latenight:{name:'熬夜追劇',   emoji:'📺', threshold:2, pen:{good:1}, type:'latenight'},
+  binge:    {name:'暴飲暴食吃到飽',emoji:'🍽️',threshold:2, pen:{bad:2}, type:'bad'},
+  flu:      {name:'流感大流行', emoji:'🤧', threshold:3, pen:{bad:2,good:1}, type:'bad'},
+  rest:     {name:'連假早睡＋運動',emoji:'😴',threshold:0, reward:{good:1}, type:'good'},
+};
+const CHANCE = {
+  yogurt:   {name:'吃優格',        emoji:'🥛', desc:'菌叢 +1🟢'},
+  water:    {name:'多喝水／纖維',  emoji:'💧', desc:'菌叢 −1🔴（最低留1）'},
+  prebiotic:{name:'益生元套餐',    emoji:'🌾', desc:'本回合檢查 好菌 +1'},
+  exercise: {name:'規律運動',      emoji:'🏃', desc:'抵消一次「熬夜」懲罰'},
+  sleep:    {name:'補充睡眠',      emoji:'🛌', desc:'立即多抽 1 張機會卡'},
+};
+const CHANCE_POOL = ['yogurt','yogurt','water','water','prebiotic','exercise','sleep'];
+
+// 命運牌堆（一段生活週期，含 2 個好事件當回血節奏）
+function buildDeck(){
+  const d = ['snack','sugar','rest','latenight','snack','binge','sugar','latenight','rest','flu'];
+  for(let i=d.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[d[i],d[j]]=[d[j],d[i]];}
+  return d;
+}
+const rand = a => a[Math.random()*a.length|0];
+
+// ---------- 狀態 ----------
+let S;
+function startGame(){
+  const deck = buildDeck();
+  S = {
+    deck, maxRounds: deck.length, round:0,
+    destiny:null, phase:'reaction',
+    players:[
+      mkP('你（乳酸菌指揮官）', true),
+      mkP('AI · 大腸桿菌', false),
+      mkP('AI · 梭菌', false),
+      mkP('AI · 葡萄球菌', false),
+    ],
+    log:[],
+  };
+  S.players.forEach(refill);
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('game').classList.remove('hidden');
+  nextRound();
+}
+function mkP(name, me){return {name, me, good:2, bad:1, score:0, hand:[], mods:{}, played:false, last:null};}
+function total(p){return p.good+p.bad;}
+function adv(p){return p.good-p.bad;}
+
+// 護欄：菌叢上限6、壞菌最低1
+function addGood(p,n=1){for(let i=0;i<n;i++){if(total(p)<6)p.good++;else if(p.bad>1){p.bad--;p.good++;}else break;}}
+function addBad(p,n=1){for(let i=0;i<n;i++){if(total(p)<6)p.bad++;else if(p.good>0){p.good--;p.bad++;}else break;}}
+function loseGood(p,n=1){for(let i=0;i<n;i++){if(p.good>0)p.good--;else break;}}
+function loseBad(p,n=1){for(let i=0;i<n;i++){if(p.bad>1)p.bad--;else break;}}
+
+function refill(p){while(p.hand.length<3)p.hand.push(rand(CHANCE_POOL));}
+
+// ---------- 出機會卡 ----------
+function applyChance(p,id){
+  if(id==='yogurt')addGood(p,1);
+  else if(id==='water')loseBad(p,1);
+  else if(id==='prebiotic')p.mods.prebiotic=true;
+  else if(id==='exercise')p.mods.exercise=true;
+  else if(id==='sleep')p.hand.push(rand(CHANCE_POOL));
+}
+function canGrowGood(p){return total(p)<6 || p.bad>1;}
+
+// 玩家點手牌
+function playCard(idx){
+  const me=S.players[0];
+  if(me.played||S.phase!=='reaction')return;
+  const id=me.hand[idx];
+  applyChance(me,id);
+  me.hand.splice(idx,1);
+  me.last=CHANCE[id].name;
+  if(id!=='sleep')me.played=true;   // 補充睡眠可再打一張（它只是抽牌）
+  else me.played=false;
+  render();
+}
+
+// AI 反應
+function aiReact(p){
+  const d=S.destiny;
+  const has=id=>p.hand.indexOf(id);
+  const play=id=>{const i=has(id);if(i<0)return false;applyChance(p,i>=0?id:id);p.hand.splice(i,1);p.last=CHANCE[id].name;return true;};
+  if(d.type==='good'){ if(has('yogurt')>=0&&canGrowGood(p))play('yogurt'); return; }
+  const gap = d.threshold - adv(p);
+  if(gap>0){ // 有危險，盡量補
+    if(d.type==='latenight'&&has('exercise')>=0){play('exercise');return;}
+    if(has('water')>=0&&p.bad>1){play('water');return;}
+    if(has('yogurt')>=0&&canGrowGood(p)){play('yogurt');return;}
+    if(has('prebiotic')>=0){play('prebiotic');return;}
+  } else { // 安全，趁機養好菌拉分
+    if(has('yogurt')>=0&&canGrowGood(p))play('yogurt');
+  }
+}
+
+// ---------- 結算 ----------
+function resolveClick(){
+  if(S.phase!=='reaction')return;
+  // AI 依序反應
+  for(let i=1;i<S.players.length;i++)aiReact(S.players[i]);
+  const d=S.destiny;
+  const rows=[];
+  S.players.forEach(p=>{
+    let passed, note='';
+    if(d.type==='good'){
+      addGood(p,1); passed=true; note='好事件，全員 +1🟢';
+    }else{
+      const eff = adv(p) + (p.mods.prebiotic?1:0);
+      passed = eff >= d.threshold;
+      if(!passed && d.type==='latenight' && p.mods.exercise){passed=true;note='運動抵消熬夜';}
+      if(!passed){
+        if(d.pen.bad)addBad(p,d.pen.bad);
+        if(d.pen.good)loseGood(p,d.pen.good);
+      }
+    }
+    p.score += adv(p);               // 累積酸性優勢分
+    rows.push({p,passed,note,played:p.last});
+  });
+  logRound(d,rows);
+  S.phase='resolved';
+  render();
+}
+
+function logRound(d,rows){
+  let h=`<div class="row"><b>回合 ${S.round}</b> ｜ ${d.emoji} ${d.name} `+
+    (d.type==='good'?'<span class="g">(好事件)</span>':`<span class="y">門檻 +${d.threshold}</span>`)+'<br>';
+  h+=rows.map(r=>{
+    const tag=r.passed?'<span class="g">安全 ✅</span>':'<span class="r">中招 ⚠️</span>';
+    const pl=r.played?` <span style="color:#9db8ab">[出:${r.played}]</span>`:'';
+    const nt=r.note?` <span style="color:#9db8ab">(${r.note})</span>`:'';
+    return `　${r.p.me?'👤':'🤖'} ${r.p.name}：${tag}${pl}${nt} → 分數 ${r.p.score}`;
+  }).join('<br>');
+  h+='</div>';
+  S.log.unshift(h);
+}
+
+// ---------- 回合推進 ----------
+function nextRound(){
+  if(S.round>=S.maxRounds){return gameOver();}
+  S.round++;
+  S.destiny = DESTINY[S.deck.pop()];
+  S.players.forEach(p=>{p.mods={};p.played=false;p.last=null;refill(p);});
+  S.phase='reaction';
+  render();
+}
+
+function gameOver(){
+  document.getElementById('game').classList.add('hidden');
+  const over=document.getElementById('over');over.classList.remove('hidden');
+  const ranked=[...S.players].sort((a,b)=>b.score-a.score);
+  const win=ranked[0];
+  let h=`<p class="win">${win.me?'🎉 你贏了！':'🤖 '+win.name+' 獲勝'}　最健康的腸道！</p>`;
+  h+='<p class="sub">累積酸性優勢分排名：</p><ol>';
+  ranked.forEach(p=>{h+=`<li>${p.me?'👤':'🤖'} ${p.name} — <b style="color:var(--gold)">${p.score}</b> 分（好菌 ${p.good}／壞菌 ${p.bad}）</li>`;});
+  h+='</ol><p class="legend">訊息：贏在平時累積好菌優勢，不在最後把壞菌清光。面對相同考驗，底子好的人才扛得住 —— 這就是「同路不同命」。</p>';
+  document.getElementById('overBox').innerHTML=h;
+}
+
+// ---------- 畫面 ----------
+function render(){
+  document.getElementById('roundPill').textContent=`回合 ${S.round} / ${S.maxRounds}`;
+  const d=S.destiny;
+  const de=document.getElementById('destiny');
+  de.className='destiny'+(d.type==='good'?' good':'');
+  const penTxt = d.type==='good' ? '全員 +1🟢（回血）'
+    : [d.pen.bad?`+${d.pen.bad}🔴`:'', d.pen.good?`−${d.pen.good}🟢`:''].filter(Boolean).join('、');
+  de.innerHTML=`<div class="emoji">${d.emoji}</div>
+    <div><div style="font-weight:800;font-size:1.2rem">${d.name}</div>
+    <div class="meta">${d.type==='good'?'好事件：全員免罰':`本關門檻 <span class="thr">酸性優勢 ≥ +${d.threshold}</span> 才免疫`}
+    ｜ 沒過懲罰：${penTxt||'—'}</div></div>`;
+
+  // players
+  const pc=document.getElementById('players');
+  pc.innerHTML=S.players.map(p=>{
+    const dots='🟢'.repeat(0)+
+      Array.from({length:p.good}).map(()=>'<span class="dot g"></span>').join('')+
+      Array.from({length:p.bad}).map(()=>'<span class="dot b"></span>').join('');
+    const a=adv(p);
+    const safe = d.type==='good' || (a+(p.mods.prebiotic?1:0))>=d.threshold;
+    let tag = S.phase==='reaction'
+      ? `<span class="tag ${safe?'safe':'hurt'}">${safe?'目前安全':'目前危險'}</span>` : '';
+    const mods=[p.mods.prebiotic?'🌾益生元':'',p.mods.exercise?'🏃運動':''].filter(Boolean).join(' ');
+    return `<div class="pl ${p.me?'me':''}">
+      <div class="top"><span class="name">${p.me?'👤':'🤖'} ${p.name}</span><span class="score">${p.score} 分</span></div>
+      <div class="dots">${dots}</div>
+      <div class="adv">好菌 ${p.good}／壞菌 ${p.bad} ｜ 酸性優勢 <span class="v">${a>=0?'+':''}${a}</span> ${tag}
+        ${mods?`<span class="tag mod">${mods}</span>`:''}</div>
+    </div>`;
+  }).join('');
+
+  // hand
+  const me=S.players[0];
+  const hd=document.getElementById('hand');
+  hd.innerHTML=me.hand.map((id,i)=>{
+    const c=CHANCE[id];
+    return `<button class="chance" ${me.played?'disabled':''} onclick="playCard(${i})">
+      <span class="cn">${c.emoji} ${c.name}</span><span class="cd">${c.desc}</span></button>`;
+  }).join('') || '<span class="sub">（暫無手牌）</span>';
+
+  // controls
+  const resolveBtn=document.getElementById('resolveBtn');
+  const nextBtn=document.getElementById('nextBtn');
+  const hint=document.getElementById('phaseHint');
+  if(S.phase==='reaction'){
+    resolveBtn.classList.remove('hidden');nextBtn.classList.add('hidden');
+    document.getElementById('myTurn').classList.remove('hidden');
+    hint.textContent = me.played?'已出牌，按結算':'可打 1 張機會卡，或直接結算';
+  }else{
+    resolveBtn.classList.add('hidden');nextBtn.classList.remove('hidden');
+    document.getElementById('myTurn').classList.add('hidden');
+    nextBtn.textContent = S.round>=S.maxRounds ? '看最終結果 🏁' : '下一回合 ▶';
+    hint.textContent='本回合已結算';
+  }
+  document.getElementById('log').innerHTML=S.log.join('');
+}
+</script>
 </body>
 </html>
